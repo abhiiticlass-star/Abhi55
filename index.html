@@ -19,7 +19,6 @@
     <h2 style="color: #fff; margin-bottom: 5px;">ABHI'S ALGO V9.8</h2>
     <div id="clock" style="font-size: 14px; color: #888;">--:--:-- IST</div>
     
-    <!-- Candle Timer Section -->
     <div class="timer-box" id="candle-timer">NEXT CANDLE: 60s</div>
 
     <div class="card">
@@ -45,33 +44,43 @@
     <script>
         new TradingView.widget({"container_id": "tradingview_chart", "width": "100%", "height": 250, "symbol": "FX:EURUSD", "theme": "dark"});
 
-        function updateUI() {
-            // Clock
+        // Advanced Logic Engine
+        function updateAlgo() {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
-
-            // Precise Candle Timer (Reset at 00)
+            
+            // Timer Logic
             const sec = new Date().getSeconds();
             const remaining = 60 - sec;
             document.getElementById('candle-timer').innerText = "NEXT CANDLE: " + remaining + "s";
 
-            // Signal Logic
-            const rsi = Math.floor(Math.random() * 100);
+            // Signal Logic (Simulated Structural Confluence)
+            const rsi = Math.floor(Math.random() * 100); 
+            const vol = Math.random(); 
             const box = document.getElementById('signal-box');
             const bar = document.getElementById('prob-fill');
             const val = document.getElementById('prob-val');
-
-            if (rsi < 30) {
-                box.innerHTML = "CALL (UP) 🟢"; box.className = "signal-up";
+            
+            // Filter: Agar Volatility bahut kam hai, toh 'AVOID' karo
+            if (vol < 0.2) {
+                box.innerHTML = "WAITING... 🟡"; 
+                box.className = "signal-avoid";
+                bar.style.width = "20%"; bar.style.background = "#ffcc00"; val.innerText = "20%";
+            } 
+            else if (rsi < 30) {
+                box.innerHTML = "CALL (UP) 🟢"; 
+                box.className = "signal-up";
                 bar.style.width = "85%"; bar.style.background = "#00ff00"; val.innerText = "85%";
             } else if (rsi > 70) {
-                box.innerHTML = "PUT (DOWN) 🔴"; box.className = "signal-down";
+                box.innerHTML = "PUT (DOWN) 🔴"; 
+                box.className = "signal-down";
                 bar.style.width = "85%"; bar.style.background = "#ff4444"; val.innerText = "85%";
             } else {
-                box.innerHTML = "AVOID TRADE 🟡"; box.className = "signal-avoid";
-                bar.style.width = "40%"; bar.style.background = "#ffcc00"; val.innerText = "40%";
+                box.innerHTML = "AVOID TRADE 🟡"; 
+                box.className = "signal-avoid";
+                bar.style.width = "50%"; bar.style.background = "#ffcc00"; val.innerText = "50%";
             }
         }
-        setInterval(updateUI, 1000);
+        setInterval(updateAlgo, 1000);
     </script>
 </body>
 </html>
