@@ -63,6 +63,20 @@
                 else { box.innerHTML = "AVOID 🟡"; box.className = "signal-avoid"; }
             }
         }, 2000);
+        // Candle Timer Sync
+function updateCandleTimer() {
+    const now = new Date();
+    const seconds = now.getSeconds();
+    const remaining = 60 - seconds;
+    const timerDiv = document.getElementById('candle-timer');
+    if (!timerDiv) {
+        document.body.insertAdjacentHTML('afterbegin', '<div id="candle-timer" style="color:yellow; font-size:12px;">Next Candle: ' + remaining + 's</div>');
+    } else {
+        timerDiv.innerText = "Next Candle: " + remaining + "s";
+    }
+}
+setInterval(updateCandleTimer, 1000);
+        
     </script>
 </body>
 </html>
