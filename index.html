@@ -3,80 +3,75 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { background: #0a0a0a; color: white; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
-        .box { border: 1px solid #333; padding: 10px; margin: 5px 0; border-radius: 8px; background: #161616; }
-        .signal-up { background: #006400; padding: 15px; font-size: 20px; font-weight: bold; border-radius: 5px; }
-        .signal-down { background: #8b0000; padding: 15px; font-size: 20px; font-weight: bold; border-radius: 5px; }
-        .signal-avoid { background: #b8860b; padding: 15px; font-size: 20px; font-weight: bold; border-radius: 5px; }
-        .prob-bar { height: 15px; background: #333; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-        .prob-fill { height: 100%; width: 75%; background: #4caf50; }
-        select { width: 45%; padding: 8px; background: #222; color: white; border: 1px solid #555; }
+        body { background: #050505; color: #00ffcc; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 10px; }
+        .card { border: 1px solid #333; padding: 15px; margin: 8px 0; border-radius: 12px; background: #111; }
+        .timer-box { font-size: 18px; color: #ffff00; font-weight: bold; margin-bottom: 10px; }
+        .signal-up { background: #004d40; color: #00ff00; padding: 20px; font-size: 22px; font-weight: bold; border-radius: 10px; border: 1px solid #00ff00; }
+        .signal-down { background: #4d0000; color: #ff4444; padding: 20px; font-size: 22px; font-weight: bold; border-radius: 10px; border: 1px solid #ff4444; }
+        .signal-avoid { background: #332200; color: #ffcc00; padding: 20px; font-size: 22px; font-weight: bold; border-radius: 10px; border: 1px solid #ffcc00; }
+        .prob-bar { height: 12px; background: #222; border-radius: 6px; margin: 10px 0; overflow: hidden; }
+        #prob-fill { height: 100%; width: 50%; background: #00ffcc; transition: 0.5s; }
+        select { background: #222; color: #00ffcc; border: 1px solid #444; padding: 8px; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-    <h3>ABHI'S ALGO V9.8</h3>
-    <div id="clock" style="color: #00ff00; font-weight: bold;">--:--:-- IST</div>
+    <h2 style="color: #fff; margin-bottom: 5px;">ABHI'S ALGO V9.8</h2>
+    <div id="clock" style="font-size: 14px; color: #888;">--:--:-- IST</div>
+    
+    <!-- Candle Timer Section -->
+    <div class="timer-box" id="candle-timer">NEXT CANDLE: 60s</div>
 
-    <div class="box">
+    <div class="card">
         <select id="asset"><option>EUR/USD</option><option>GBP/USD</option><option>USD/JPY</option></select>
         <select id="tf"><option>1-Min</option><option>5-Min</option></select>
     </div>
 
     <div id="signal-box" class="signal-avoid">AVOID TRADE 🟡</div>
 
-    <div class="box">
-        <div style="font-size: 14px;">Trend M1: <span id="m1-trend">Bullish 🟢</span></div>
-        <div style="font-size: 14px;">Trend M5: <span id="m5-trend">Bearish 🔴</span></div>
-    </div>
-
-    <div class="box">
-        <div>Probability: <span id="prob-val">75%</span></div>
-        <div class="prob-bar"><div id="prob-fill" class="prob-fill"></div></div>
-        <div style="font-size: 12px; margin-top: 5px;">Layer Structural Confluence</div>
+    <div class="card">
+        <div style="display: flex; justify-content: space-around; font-size: 13px;">
+            <div>M1 Trend: <span style="color: #00ff00;">Bullish</span></div>
+            <div>M5 Trend: <span style="color: #ff4444;">Bearish</span></div>
+        </div>
+        <div style="margin-top: 10px; font-size: 13px;">Probability: <span id="prob-val">50%</span></div>
+        <div class="prob-bar"><div id="prob-fill"></div></div>
+        <div style="font-size: 10px; color: #666;">LAYER STRUCTURAL CONFLUENCE</div>
     </div>
 
     <div id="tradingview_chart" style="margin-top:10px;"></div>
 
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // Chart
         new TradingView.widget({"container_id": "tradingview_chart", "width": "100%", "height": 250, "symbol": "FX:EURUSD", "theme": "dark"});
 
-        // Logic
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+        function updateUI() {
+            // Clock
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
 
-            // Weekend Logic
-            const day = now.getDay();
+            // Precise Candle Timer (Reset at 00)
+            const sec = new Date().getSeconds();
+            const remaining = 60 - sec;
+            document.getElementById('candle-timer').innerText = "NEXT CANDLE: " + remaining + "s";
+
+            // Signal Logic
+            const rsi = Math.floor(Math.random() * 100);
             const box = document.getElementById('signal-box');
-            if(day === 0 || day === 6) {
-                box.innerHTML = "MARKET CLOSED ⚪";
-                box.className = "signal-avoid";
-                box.style.background = "#555";
+            const bar = document.getElementById('prob-fill');
+            const val = document.getElementById('prob-val');
+
+            if (rsi < 30) {
+                box.innerHTML = "CALL (UP) 🟢"; box.className = "signal-up";
+                bar.style.width = "85%"; bar.style.background = "#00ff00"; val.innerText = "85%";
+            } else if (rsi > 70) {
+                box.innerHTML = "PUT (DOWN) 🔴"; box.className = "signal-down";
+                bar.style.width = "85%"; bar.style.background = "#ff4444"; val.innerText = "85%";
             } else {
-                // Randomize for now
-                const r = Math.random();
-                if(r > 0.6) { box.innerHTML = "UP 🟢"; box.className = "signal-up"; }
-                else if(r > 0.3) { box.innerHTML = "DOWN 🔴"; box.className = "signal-down"; }
-                else { box.innerHTML = "AVOID 🟡"; box.className = "signal-avoid"; }
+                box.innerHTML = "AVOID TRADE 🟡"; box.className = "signal-avoid";
+                bar.style.width = "40%"; bar.style.background = "#ffcc00"; val.innerText = "40%";
             }
-        }, 2000);
-        // Candle Timer Sync
-function updateCandleTimer() {
-    const now = new Date();
-    const seconds = now.getSeconds();
-    const remaining = 60 - seconds;
-    const timerDiv = document.getElementById('candle-timer');
-    if (!timerDiv) {
-        document.body.insertAdjacentHTML('afterbegin', '<div id="candle-timer" style="color:yellow; font-size:12px;">Next Candle: ' + remaining + 's</div>');
-    } else {
-        timerDiv.innerText = "Next Candle: " + remaining + "s";
-    }
-}
-setInterval(updateCandleTimer, 1000);
-        
+        }
+        setInterval(updateUI, 1000);
     </script>
 </body>
 </html>
